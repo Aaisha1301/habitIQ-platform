@@ -2,6 +2,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.models.habit import Habit
+from app.models.category import Category
 from app.schemas.habit import HabitCreate, HabitUpdate
 
 
@@ -10,6 +11,20 @@ def create_habit(
     user_id: int,
     db: Session,
 ) -> Habit:
+
+    # Validate the category if one was provided
+    if habit_data.category_id is not None:
+        category = (
+            db.query(Category)
+            .filter(Category.id == habit_data.category_id)
+            .first()
+        )
+
+        if category is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Category not found",
+            )
 
     new_habit = Habit(
         user_id=user_id,
@@ -25,6 +40,7 @@ def create_habit(
 
     return new_habit
 
+
 def get_user_habits(
     user_id: int,
     db: Session,
@@ -38,6 +54,8 @@ def get_user_habits(
     )
 
     return habits
+
+
 def update_habit(
     habit_id: int,
     user_id: int,
@@ -59,6 +77,23 @@ def update_habit(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Habit not found",
         )
+
+    # Validate category only if category_id was supplied
+    if (
+        "category_id" in habit_data.model_fields_set
+        and habit_data.category_id is not None
+    ):
+        category = (
+            db.query(Category)
+            .filter(Category.id == habit_data.category_id)
+            .first()
+        )
+
+        if category is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Category not found",
+            )
 
     update_data = habit_data.model_dump(exclude_unset=True)
 

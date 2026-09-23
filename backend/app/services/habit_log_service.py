@@ -68,3 +68,52 @@ def get_user_habit_logs(user_id: int, db: Session):
         .order_by(HabitLog.log_date.desc())
         .all()
     )
+
+def update_habit_log(log_id: int, user_id: int, log_data, db: Session):
+    log = (
+        db.query(HabitLog)
+        .filter(
+            HabitLog.id == log_id,
+            HabitLog.user_id == user_id,
+        )
+        .first()
+    )
+
+    if not log:
+        raise HTTPException(
+            status_code=404,
+            detail="Habit log not found",
+        )
+
+    update_data = log_data.model_dump(exclude_unset=True)
+
+    for field, value in update_data.items():
+        setattr(log, field, value)
+
+    db.commit()
+    db.refresh(log)
+
+    return log
+
+def delete_habit_log(log_id: int, user_id: int, db: Session):
+    log = (
+        db.query(HabitLog)
+        .filter(
+            HabitLog.id == log_id,
+            HabitLog.user_id == user_id,
+        )
+        .first()
+    )
+
+    if not log:
+        raise HTTPException(
+            status_code=404,
+            detail="Habit log not found",
+        )
+
+    db.delete(log)
+    db.commit()
+
+    return {
+        "message": "Habit log deleted successfully"
+    }

@@ -20,3 +20,7 @@ class HabitLogResponse(BaseModel):
     status: str
     notes: str | None = None
     created_at: datetime | None = None
+
+class HabitLogUpdate(BaseModel):
+    status: Literal["completed", "skipped", "missed"] | None = None
+    notes: str | None = Field(default=None, max_length=500)
