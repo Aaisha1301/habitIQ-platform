@@ -5,7 +5,9 @@ from app.api.habits import router as habits_router
 from app.api.habit_logs import router as habit_logs_router
 from app.api.categories import router as categories_router
 from app.api.goals import router as goals_router
+from app.api.analytics import router as analytics_router
 from app.api.reminders import router as reminders_router
+
 
 
 app = FastAPI(
@@ -44,4 +46,5 @@ app.include_router(habits_router)
 app.include_router(habit_logs_router)
 app.include_router(categories_router)
 app.include_router(goals_router)
+app.include_router(analytics_router)
 app.include_router(reminders_router)
