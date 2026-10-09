@@ -7,7 +7,7 @@ from app.api.categories import router as categories_router
 from app.api.goals import router as goals_router
 from app.api.analytics import router as analytics_router
 from app.api.reminders import router as reminders_router
-
+from app.api.ai_predictions import router as ai_predictions_router
 
 
 app = FastAPI(
@@ -48,3 +48,4 @@ app.include_router(categories_router)
 app.include_router(goals_router)
 app.include_router(analytics_router)
 app.include_router(reminders_router)
+app.include_router(ai_predictions_router)
